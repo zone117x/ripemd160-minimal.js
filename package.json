@@ -1,6 +1,6 @@
 {
   "name": "ripemd160-min",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A minimal 0 dependency RIPEMD160 hash lib",
   "keywords": ["ripemd160", "ripe160", "rmd160", "ripemd"],
   "types": "./dist-types/index.d.ts",

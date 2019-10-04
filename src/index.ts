@@ -71,7 +71,7 @@ function fn5(
   return (rotl((a + (b ^ (c | (~d))) + m + k) | 0, s) + e) | 0
 }
 
-function readInt32LE(buffer: number[], offset: number): number {
+function readInt32LE(buffer: ByteArray, offset: number): number {
   offset >>>= 0
   return (buffer[offset])
     | (buffer[offset + 1] << 8)
@@ -79,7 +79,7 @@ function readInt32LE(buffer: number[], offset: number): number {
     | (buffer[offset + 3] << 24)
 }
 
-function writeUInt32LE(buffer: number[], value: number, offset: number): number {
+function writeUInt32LE(buffer: ByteArray, value: number, offset: number): number {
   value = +value
   offset >>>= 0
   buffer[offset + 3] = (value >>> 24)
@@ -89,7 +89,7 @@ function writeUInt32LE(buffer: number[], value: number, offset: number): number 
   return offset + 4
 }
 
-function writeInt32LE(buffer: number[], value: number, offset: number): number {
+function writeInt32LE(buffer: ByteArray, value: number, offset: number): number {
   value = +value
   offset >>>= 0
   buffer[offset] = (value & 0xff)
@@ -98,30 +98,40 @@ function writeInt32LE(buffer: number[], value: number, offset: number): number {
   buffer[offset + 3] = (value >>> 24)
   return offset + 4
 }
+
+function createArray(size: number): ByteArray {
+  if (typeof Uint8Array !== 'undefined') {
+    return new Uint8Array(size)
+  } else {
+    return new Array<number>(size)
+  }
+}
+
+export type ByteArray = number[] | Uint8Array
 
 export default class RIPEMD160 {
-  _block: number[];
+  private _block: ByteArray;
 
-  _blockSize: number;
+  private _blockSize: number;
 
-  _blockOffset: number;
+  private _blockOffset: number;
 
-  _length: number[];
+  private _length: number[];
 
-  _finalized: boolean;
+  private _finalized: boolean;
 
-  _a: number;
+  private _a: number;
 
-  _b: number;
+  private _b: number;
 
-  _c: number;
+  private _c: number;
 
-  _d: number;
+  private _d: number;
 
-  _e: number;
+  private _e: number;
 
   constructor() {
-    this._block = new Array<number>(64)
+    this._block = createArray(64)
     this._blockSize = 64
     this._blockOffset = 0
     this._length = [0, 0, 0, 0]
@@ -134,7 +144,7 @@ export default class RIPEMD160 {
     this._e = 0xc3d2e1f0
   }
 
-  update(data: number[]) {
+  update(data: ByteArray) {
     if (this._finalized) throw new Error('Digest already called')
 
     // consume data
@@ -157,7 +167,7 @@ export default class RIPEMD160 {
     return this
   }
 
-  _update() {
+  private _update() {
     const words = ARRAY16
     for (let j = 0; j < 16; ++j) {
       words[j] = readInt32LE(this._block, j * 4)
@@ -218,26 +228,13 @@ export default class RIPEMD160 {
     this._a = t
   }
 
-  digest() {
+  digest(): ByteArray {
     if (this._finalized) {
       throw new Error('Digest already called')
     }
 
     this._finalized = true
 
-    const digest = this._digest()
-
-    // reset state
-    this._block.fill(0)
-    this._blockOffset = 0
-    for (let i = 0; i < 4; ++i) {
-      this._length[i] = 0
-    }
-
-    return digest
-  }
-
-  _digest() {
     // create padding and handle blocks
     this._block[this._blockOffset++] = 0x80
     if (this._blockOffset > 56) {
@@ -252,12 +249,22 @@ export default class RIPEMD160 {
     this._update()
 
     // produce result
-    const buffer = new Array<number>(20)
+    const buffer = createArray(20)
     writeInt32LE(buffer, this._a, 0)
     writeInt32LE(buffer, this._b, 4)
     writeInt32LE(buffer, this._c, 8)
     writeInt32LE(buffer, this._d, 12)
     writeInt32LE(buffer, this._e, 16)
+
+    // reset state
+    this._block.fill(0)
+    this._blockOffset = 0
+    for (let i = 0; i < 4; ++i) {
+      this._length[i] = 0
+    }
+
     return buffer
   }
+
+
 }

@@ -75,9 +75,17 @@ function writeInt32LE(buffer, value, offset) {
     buffer[offset + 3] = (value >>> 24);
     return offset + 4;
 }
+function createArray(size) {
+    if (typeof Uint8Array !== 'undefined') {
+        return new Uint8Array(size);
+    }
+    else {
+        return new Array(size);
+    }
+}
 class RIPEMD160 {
     constructor() {
-        this._block = new Array(64);
+        this._block = createArray(64);
         this._blockSize = 64;
         this._blockOffset = 0;
         this._length = [0, 0, 0, 0];
@@ -174,16 +182,6 @@ class RIPEMD160 {
             throw new Error('Digest already called');
         }
         this._finalized = true;
-        const digest = this._digest();
-        // reset state
-        this._block.fill(0);
-        this._blockOffset = 0;
-        for (let i = 0; i < 4; ++i) {
-            this._length[i] = 0;
-        }
-        return digest;
-    }
-    _digest() {
         // create padding and handle blocks
         this._block[this._blockOffset++] = 0x80;
         if (this._blockOffset > 56) {
@@ -196,12 +194,18 @@ class RIPEMD160 {
         writeUInt32LE(this._block, this._length[1], 60);
         this._update();
         // produce result
-        const buffer = new Array(20);
+        const buffer = createArray(20);
         writeInt32LE(buffer, this._a, 0);
         writeInt32LE(buffer, this._b, 4);
         writeInt32LE(buffer, this._c, 8);
         writeInt32LE(buffer, this._d, 12);
         writeInt32LE(buffer, this._e, 16);
+        // reset state
+        this._block.fill(0);
+        this._blockOffset = 0;
+        for (let i = 0; i < 4; ++i) {
+            this._length[i] = 0;
+        }
         return buffer;
     }
 }

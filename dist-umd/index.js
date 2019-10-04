@@ -84,9 +84,17 @@
         buffer[offset + 3] = (value >>> 24);
         return offset + 4;
     }
+    function createArray(size) {
+        if (typeof Uint8Array !== 'undefined') {
+            return new Uint8Array(size);
+        }
+        else {
+            return new Array(size);
+        }
+    }
     var RIPEMD160 = /** @class */ (function () {
         function RIPEMD160() {
-            this._block = new Array(64);
+            this._block = createArray(64);
             this._blockSize = 64;
             this._blockOffset = 0;
             this._length = [0, 0, 0, 0];
@@ -183,16 +191,6 @@
                 throw new Error('Digest already called');
             }
             this._finalized = true;
-            var digest = this._digest();
-            // reset state
-            this._block.fill(0);
-            this._blockOffset = 0;
-            for (var i = 0; i < 4; ++i) {
-                this._length[i] = 0;
-            }
-            return digest;
-        };
-        RIPEMD160.prototype._digest = function () {
             // create padding and handle blocks
             this._block[this._blockOffset++] = 0x80;
             if (this._blockOffset > 56) {
@@ -205,12 +203,18 @@
             writeUInt32LE(this._block, this._length[1], 60);
             this._update();
             // produce result
-            var buffer = new Array(20);
+            var buffer = createArray(20);
             writeInt32LE(buffer, this._a, 0);
             writeInt32LE(buffer, this._b, 4);
             writeInt32LE(buffer, this._c, 8);
             writeInt32LE(buffer, this._d, 12);
             writeInt32LE(buffer, this._e, 16);
+            // reset state
+            this._block.fill(0);
+            this._blockOffset = 0;
+            for (var i = 0; i < 4; ++i) {
+                this._length[i] = 0;
+            }
             return buffer;
         };
         return RIPEMD160;
