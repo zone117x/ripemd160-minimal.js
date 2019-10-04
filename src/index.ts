@@ -71,7 +71,7 @@ function fn5(
   return (rotl((a + (b ^ (c | (~d))) + m + k) | 0, s) + e) | 0
 }
 
-function readInt32LE(buffer: Uint8Array, offset: number): number {
+function readInt32LE(buffer: number[], offset: number): number {
   offset >>>= 0
   return (buffer[offset])
     | (buffer[offset + 1] << 8)
@@ -79,7 +79,7 @@ function readInt32LE(buffer: Uint8Array, offset: number): number {
     | (buffer[offset + 3] << 24)
 }
 
-function writeUInt32LE(buffer: Uint8Array, value: number, offset: number): number {
+function writeUInt32LE(buffer: number[], value: number, offset: number): number {
   value = +value
   offset >>>= 0
   buffer[offset + 3] = (value >>> 24)
@@ -89,7 +89,7 @@ function writeUInt32LE(buffer: Uint8Array, value: number, offset: number): numbe
   return offset + 4
 }
 
-function writeInt32LE(buffer: Uint8Array, value: number, offset: number): number {
+function writeInt32LE(buffer: number[], value: number, offset: number): number {
   value = +value
   offset >>>= 0
   buffer[offset] = (value & 0xff)
@@ -100,7 +100,7 @@ function writeInt32LE(buffer: Uint8Array, value: number, offset: number): number
 }
 
 export default class RIPEMD160 {
-  _block: Uint8Array;
+  _block: number[];
 
   _blockSize: number;
 
@@ -121,7 +121,7 @@ export default class RIPEMD160 {
   _e: number;
 
   constructor() {
-    this._block = new Uint8Array(64)
+    this._block = new Array<number>(64)
     this._blockSize = 64
     this._blockOffset = 0
     this._length = [0, 0, 0, 0]
@@ -134,7 +134,7 @@ export default class RIPEMD160 {
     this._e = 0xc3d2e1f0
   }
 
-  update(data: Uint8Array) {
+  update(data: number[]) {
     if (this._finalized) throw new Error('Digest already called')
 
     // consume data
@@ -252,7 +252,7 @@ export default class RIPEMD160 {
     this._update()
 
     // produce result
-    const buffer = new Uint8Array(20)
+    const buffer = new Array<number>(20)
     writeInt32LE(buffer, this._a, 0)
     writeInt32LE(buffer, this._b, 4)
     writeInt32LE(buffer, this._c, 8)

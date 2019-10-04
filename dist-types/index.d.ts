@@ -1,5 +1,5 @@
 export default class RIPEMD160 {
-    _block: Uint8Array;
+    _block: number[];
     _blockSize: number;
     _blockOffset: number;
     _length: number[];
@@ -10,9 +10,9 @@ export default class RIPEMD160 {
     _d: number;
     _e: number;
     constructor();
-    update(data: Uint8Array): this;
+    update(data: number[]): this;
     _update(): void;
-    digest(): Uint8Array;
-    _digest(): Uint8Array;
+    digest(): number[];
+    _digest(): number[];
 }
 //# sourceMappingURL=index.d.ts.map

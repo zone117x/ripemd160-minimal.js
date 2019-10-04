@@ -77,7 +77,7 @@ function writeInt32LE(buffer, value, offset) {
 }
 class RIPEMD160 {
     constructor() {
-        this._block = new Uint8Array(64);
+        this._block = new Array(64);
         this._blockSize = 64;
         this._blockOffset = 0;
         this._length = [0, 0, 0, 0];
@@ -196,7 +196,7 @@ class RIPEMD160 {
         writeUInt32LE(this._block, this._length[1], 60);
         this._update();
         // produce result
-        const buffer = new Uint8Array(20);
+        const buffer = new Array(20);
         writeInt32LE(buffer, this._a, 0);
         writeInt32LE(buffer, this._b, 4);
         writeInt32LE(buffer, this._c, 8);

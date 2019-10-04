@@ -4,10 +4,10 @@ import RIPEMD160 from '../src/index';
 import vectors = require('hash-test-vectors');
 
 vectors.forEach(function (vector: any, i: number) {
-  var input = new Buffer(vector.input, 'base64')
+  var input = new Buffer(vector.input, 'base64').toJSON().data
   it('vector #' + (i + 1) + ' with .update', function () {
     const hashResult = new RIPEMD160().update(input).digest();
-    const hex = Buffer.from(hashResult.buffer).toString('hex');
+    const hex = Buffer.from(hashResult).toString('hex');
     assert.equal(hex, vector.ripemd160);
   })
 })

@@ -86,7 +86,7 @@
     }
     var RIPEMD160 = /** @class */ (function () {
         function RIPEMD160() {
-            this._block = new Uint8Array(64);
+            this._block = new Array(64);
             this._blockSize = 64;
             this._blockOffset = 0;
             this._length = [0, 0, 0, 0];
@@ -205,7 +205,7 @@
             writeUInt32LE(this._block, this._length[1], 60);
             this._update();
             // produce result
-            var buffer = new Uint8Array(20);
+            var buffer = new Array(20);
             writeInt32LE(buffer, this._a, 0);
             writeInt32LE(buffer, this._b, 4);
             writeInt32LE(buffer, this._c, 8);
