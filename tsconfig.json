@@ -3,7 +3,6 @@
     "target": "es2017",
     "declaration": true,
     "declarationMap": true,
-    "declarationDir": "./dist-types",
     "rootDir": "./src",
     "strict": true,
     "lib": [

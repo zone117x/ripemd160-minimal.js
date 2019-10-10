@@ -1,12 +1,15 @@
 {
   "name": "ripemd160-min",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A minimal 0 dependency RIPEMD160 hash lib",
-  "keywords": ["ripemd160", "ripe160", "rmd160", "ripemd"],
-  "types": "./dist-types/index.d.ts",
-  "main": "./dist-cjs/index.js",
+  "keywords": [
+    "ripemd160",
+    "ripe160",
+    "rmd160",
+    "ripemd"
+  ],
+  "main": "./dist-umd/index.js",
   "module": "./dist-esm/index.js",
-  "browser": "./dist-umd/index.js",
   "unpkg": "./dist-umd/index.js",
   "engines": {
     "node": ">=8"
@@ -48,7 +51,6 @@
     "dist-cjs",
     "dist-esm",
     "dist-umd",
-    "dist-types",
     "src",
     "tsconfig.json"
   ],
