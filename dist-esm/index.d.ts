@@ -1,5 +1,5 @@
 export declare type ByteArray = number[] | Uint8Array;
-export default class RIPEMD160 {
+export declare class RIPEMD160 {
     private _block;
     private _blockSize;
     private _blockOffset;
@@ -15,4 +15,5 @@ export default class RIPEMD160 {
     private _update;
     digest(): ByteArray;
 }
+export default RIPEMD160;
 //# sourceMappingURL=index.d.ts.map
